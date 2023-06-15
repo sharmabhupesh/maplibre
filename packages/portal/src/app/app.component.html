@@ -1,0 +1,104 @@
+<mgl-map
+  [style]="'https://api.maptiler.com/maps/basic-v2/style.json?key=OZOnPqERzSMY5D72j2gf'"
+  [zoom]="[3]"
+  [center]="[78.0281, 21.9149]"
+  (mapLoad)="map = $event"
+>
+  <!-- Search Box for cities -->
+  <mgl-control position="top-right">
+    <div class="ng-autocomplete">
+      <ng-autocomplete 
+        [data]="searchCitiesList"
+        [searchKeyword]="keyword"
+        [minQueryLength]="minQueryLength"
+        [initialValue]="selectedSearchCity"
+        placeholder="Search cities"
+        (selected)='onSeacrhInputSelectEvent($event)'
+        (inputChanged)='onChangeSearch($event)'
+        (inputCleared)="onSearchInputClear($event)"
+        (inputFocused)="onSearchInputFocused($event)"
+        [itemTemplate]="itemTemplate"
+        [notFoundTemplate]="notFoundTemplate"
+        [isLoading]="isLoading"
+        notFoundText="No City Found">                                 
+      </ng-autocomplete>
+      
+      <ng-template #itemTemplate let-item>
+        <a [innerHTML]="item.name"></a>
+      </ng-template>
+      
+      <ng-template #notFoundTemplate let-notFound>
+        <div [innerHTML]="notFound"></div>
+      </ng-template>
+      </div>
+  </mgl-control>
+  
+  <mgl-control position="top-left">
+    <div
+      class="block w-72 rounded-lg bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]"
+    >
+      <div
+        class="border-b-2 border-neutral-100 p-4 text-sm font-bold"
+      >
+        Measure Distance Between Cities
+      </div>
+      <div class="p-4">
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-medium mb-2" for="username">
+            Select Cities
+          </label>
+          <ng-select 
+            class="w-52"
+            [items]="cities" 
+            bindLabel="name"
+            [multiple]="true"
+            placeholder="Select Cities"
+            [searchable]="true"
+            [clearable]="true"
+            [hideSelected]="true"
+            [(ngModel)]="selectedCities"
+            [virtualScroll]="true"
+            (change)="resetValues()"
+            (clear)="resetValues()"
+            (remove)="resetValues()"
+          >
+          </ng-select>
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-medium mb-2" for="username">
+            Units
+          </label>
+          <div class="flex flex-col">
+            <div class="flex my-2">
+              <div class="flex items-center mr-4">
+                  <input id="imperial-radio" type="radio" [value]="0"  [(ngModel)]="selectedUnitSystem" name="inline-radio-group" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300" (change)="onChangeRadioButtons('miles')">
+                  <label for="imperial-radio" class="ml-2 text-sm font-medium text-gray-900">Imperial</label>
+              </div>
+              <div class="flex items-center mr-4">
+                  <input id="metric-radio" type="radio" [value]="1"  [(ngModel)]="selectedUnitSystem" name="inline-radio-group" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300" (change)="onChangeRadioButtons('kilometers')">
+                  <label for="metric-radio" class="ml-2 text-sm font-medium text-gray-900">Metric</label>
+              </div>
+            </div>
+            <ng-select 
+              class="w-52 my-2"
+              [items]="distanceUnits[selectedUnitSystem].units"
+              placeholder="Select Units"
+              [(ngModel)]="selectedUnits"
+              [clearable]="false"
+              (change)="onSelectUnits()"
+            >
+            </ng-select>
+          </div>
+        </div>
+        <div class="mb-2  text-center">
+          <button
+            type="button"
+            class="inline-block rounded bg-blue-500 px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:!bg-blue-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:!bg-blue-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-blue-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)]"
+            (click)="calculateDistance()">
+            Calculate Distance
+          </button>
+        </div>
+      </div>
+    </div>
+  </mgl-control>
+</mgl-map>
