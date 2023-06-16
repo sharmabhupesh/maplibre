@@ -13,7 +13,7 @@ variables:
 .base-pipeline:
   interruptible: true
   only:
-    - main
+    - master
     - merge_requests
   before_script:
     - npm ci
